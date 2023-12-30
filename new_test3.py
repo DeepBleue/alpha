@@ -5,6 +5,7 @@ import discord
 import asyncio
 import nest_asyncio
 from database_util import *
+import time
 
 # Initialize the database (assuming create_db, insert_number, number_exists are defined)
 db_name = 'dnews.db'
@@ -26,45 +27,51 @@ async def send_discord_message(message):
         await channel.send(message)
     else:
         print("Channel not found or bot does not have access.")
+import random
 
-# Selenium part to extract numbers
+import functools
+import asyncio
+
+def to_thread(func):
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        return await asyncio.to_thread(func, *args, **kwargs)
+    return wrapper
+
+
+
 async def extract_numbers():
-    # Initialize the WebDriver
     driver = webdriver.Chrome()
+    await asyncio.to_thread(driver.get, "https://www.dnews.co.kr/uhtml/view.jsp?idxno=202312281142039440785")
+    await asyncio.to_thread(driver.execute_script, "gojournalF('박연오','koss9911')")
 
-    # Open the webpage
-    driver.get("https://www.dnews.co.kr/uhtml/view.jsp?idxno=202312281142039440785")
-
-    # Execute the JavaScript function
-    driver.execute_script("gojournalF('박연오','koss9911')")
-
-    try : 
-        while True : 
-            elements = driver.find_elements(By.CLASS_NAME, 'lineUse')
+    try: 
+        while True: 
+            elements = await asyncio.to_thread(driver.find_elements, By.CLASS_NAME, 'lineUse')
             for element in elements:
-                a_tags = element.find_elements(By.TAG_NAME, 'a')
+                a_tags = await asyncio.to_thread(element.find_elements, By.TAG_NAME, 'a')
                 for a_tag in a_tags:
-                    href = a_tag.get_attribute('href')
+                    href = await asyncio.to_thread(a_tag.get_attribute, 'href')
                     number_part = href.split('idxno=')[1]
-                    if not number_exists(number_part,db_name):
-                        insert_number(number_part,db_name)
+                    if not number_exists(number_part, db_name):
+                        insert_number(number_part, db_name)
                         await send_discord_message(f'{href}')
             
-            
-            id_to_delete = get_id_to_delete(db_name)  # Function to determine which ID to delete
+            id_to_delete = get_id_to_delete(db_name)
             if id_to_delete is not None:
                 delete_id(db_name, id_to_delete)
-            await asyncio.sleep(5)
-            driver.refresh()
+            await asyncio.sleep(random.uniform(6, 10))
+            await asyncio.to_thread(driver.refresh)
 
-    except KeyboardInterrupt : 
+    except KeyboardInterrupt: 
         driver.quit()
 
-# Run the Discord bot
+from concurrent.futures import ThreadPoolExecutor
+
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
-    await extract_numbers()  # Run the Selenium script after logging in
+    await extract_numbers()
     await client.close()
 
 

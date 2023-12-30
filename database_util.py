@@ -26,3 +26,22 @@ def number_exists(number,db_name):
     exists = cursor.fetchone() is not None
     conn.close()
     return exists
+
+def delete_id(db_name, id):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM numbers WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+
+
+def get_id_to_delete(db_name):
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    # Assuming 'id' is your primary key and you want to delete the most recent entry
+    cursor.execute("SELECT id FROM numbers ORDER BY id DESC LIMIT 1")
+    result = cursor.fetchone()
+    
+    conn.close()
+    return result[0] if result else None
