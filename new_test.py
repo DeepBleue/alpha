@@ -5,6 +5,9 @@ import discord
 import asyncio
 import nest_asyncio
 from database_util import *
+import winsound
+
+
 
 # Initialize the database (assuming create_db, insert_number, number_exists are defined)
 db_name = 'dnews.db'
@@ -27,6 +30,11 @@ async def send_discord_message(message):
     else:
         print("Channel not found or bot does not have access.")
 
+async def ring():
+    winsound.Beep(1000, 100)
+    
+    
+    
 # Selenium part to extract numbers
 async def extract_numbers():
     # Initialize the WebDriver
@@ -48,7 +56,8 @@ async def extract_numbers():
                     number_part = href.split('idxno=')[1]
                     if not number_exists(number_part,db_name):
                         insert_number(number_part,db_name)
-                        await send_discord_message(f'{href}')
+                        await ring()
+                        # await send_discord_message(f'{href}')
             
             
             id_to_delete = get_id_to_delete(db_name)  # Function to determine which ID to delete

@@ -6,6 +6,11 @@ import asyncio
 import nest_asyncio
 from database_util import *
 import time
+import random
+import winsound
+import functools
+import asyncio
+
 
 # Initialize the database (assuming create_db, insert_number, number_exists are defined)
 db_name = 'dnews.db'
@@ -27,16 +32,17 @@ async def send_discord_message(message):
         await channel.send(message)
     else:
         print("Channel not found or bot does not have access.")
-import random
 
-import functools
-import asyncio
 
 def to_thread(func):
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
         return await asyncio.to_thread(func, *args, **kwargs)
     return wrapper
+
+
+# Beep at 1000 Hz for 100 milliseconds
+
 
 
 
@@ -55,7 +61,8 @@ async def extract_numbers():
                     number_part = href.split('idxno=')[1]
                     if not number_exists(number_part, db_name):
                         insert_number(number_part, db_name)
-                        await send_discord_message(f'{href}')
+                        winsound.Beep(1000, 100)
+                        # await send_discord_message(f'{href}')
             
             id_to_delete = get_id_to_delete(db_name)
             if id_to_delete is not None:
