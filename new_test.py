@@ -6,6 +6,9 @@ import asyncio
 import nest_asyncio
 from database_util import *
 import winsound
+from playsound import playsound
+
+
 
 
 
@@ -31,7 +34,8 @@ async def send_discord_message(message):
         print("Channel not found or bot does not have access.")
 
 async def ring():
-    winsound.Beep(1000, 100)
+    # winsound.Beep(1000, 100)
+    playsound('./sound/voice.mp3')
     
     
     
@@ -60,9 +64,9 @@ async def extract_numbers():
                         # await send_discord_message(f'{href}')
             
             
-            id_to_delete = get_id_to_delete(db_name)  # Function to determine which ID to delete
-            if id_to_delete is not None:
-                delete_id(db_name, id_to_delete)
+            # id_to_delete = get_id_to_delete(db_name)  # Function to determine which ID to delete
+            # if id_to_delete is not None:
+            #     delete_id(db_name, id_to_delete)
             await asyncio.sleep(5)
             driver.refresh()
 
