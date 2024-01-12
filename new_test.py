@@ -73,12 +73,3 @@ async def extract_numbers():
     except KeyboardInterrupt : 
         driver.quit()
 
-# Run the Discord bot
-@client.event
-async def on_ready():
-    print(f'Logged in as {client.user}')
-    await extract_numbers()  # Run the Selenium script after logging in
-    await client.close()
-
-
-client.run('MTE4OTk1OTc5MDg1MjU3MTIxNw.GnhxkJ.tn1GY86zR8C-nwD13jTitOU8o4RN3_yFeXB1zo')  # Replace 'YOUR_BOT_TOKEN' with your bot's token
