@@ -61,8 +61,7 @@ async def on_ready():
     print(f'Logged in as {client.user}')
     with ThreadPoolExecutor() as executor:
         loop = asyncio.get_event_loop()
-        await loop.run_in_executor(executor, extract_numbers)
-    await client.close()
+        await loop.run_in_executor(executor, extract_numbers)a
 
 
 client.run('MTE4OTk1OTc5MDg1MjU3MTIxNw.GnhxkJ.tn1GY86zR8C-nwD13jTitOU8o4RN3_yFeXB1zo')  # Replace 'YOUR_BOT_TOKEN' with your bot's token
